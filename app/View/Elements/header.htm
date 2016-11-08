@@ -1,0 +1,97 @@
+{% set fullHeight = _view.fetch('fullHeightBackground')|default('no') %}
+{% set headerClass = _view.fetch('additionalHeaderClass')|default('backgroundImage') %}
+<div class="headerSection {% if isAuth %} loginIn {% endif %} {% if fullHeight == 'no' %}innerHeader {% endif %}{{ headerClass }} left fullWidth {{ _view.fetch('hdrAdditionalHeaderClass') }}" style="background-image:url('{{ _view.fetch('hdrBgImage')|default('/img/blog-bg.jpg')|e }}');">
+    {% if fullHeight == 'no' %} <div class="innerHeaderGradient"></div> {% endif %}
+    <div class="navigation">
+        <div class="container">
+            <a href="/" class="logo left">
+                <img src="/img/black/logo.png" alt="" title="">
+            </a>
+            <span class="navBurger">
+                <span></span>
+            </span>
+            <div class="nav right">
+                <span id="AuthUserNav" style="{% if not isAuth %}display:none{% endif %}">
+                    <a href="/users/logout" class="right logout">Logout</a>
+                    <a href="/users/account" class="socLink userIco right"> <i class="fa fa-user"></i>{#My Account#}</a>
+                </span>
+                <span id="NonAuthUserNav" style="{% if isAuth %}display:none{% endif %}">
+                    <a href="" class="right login register">Register</a>
+                    <a href="" class="right login">Login</a>
+                </span>
+
+
+                <div class="socHeader right">
+                    <a href="/products/cart" class="shopLink right">
+                        <img src="/img/black/shop-ico.png" alt="" title="">
+                        {{ cartItems ? '<span>'~cartItems~'</span>' }}
+                    </a>
+                    {% if options.linkedin %}
+                        <a href="{{ options.linkedin }}" class="socLink right" target="_blank"> <img src="/img/black/ld.png" alt="" title=""> </a>
+                    {% endif %}
+                    {% if options.google %}
+                        <a href="{{ options.google }}" class="socLink right" target="_blank"> <img src="/img/black/gl.png" alt="" title=""> </a>
+                    {% endif %}
+                    {% if options.pinterest %}
+                        <a href="{{ options.pinterest }}" target="_blank" class="socLink right"> <img src="/img/black/pt.png" alt="" title=""> </a>
+                    {% endif %}
+                    {% if options.instagram %}
+                        <a href="{{ options.instagram }}" class="socLink right" target="_blank"> <img src="/img/black/inst.png" alt="" title=""> </a>
+                    {% endif %}
+                    {% if options.twitter %}
+                        <a href="{{ options.twitter }}" class="socLink right" target="_blank"> <img src="/img/black/tw.png" alt="" title=""> </a>
+                    {% endif %}
+                    {% if options.facebook %}
+                        <a href="{{ options.facebook }}" class="socLink right" target="_blank"> <img src="/img/black/fb.png" alt="" title=""> </a>
+                    {% endif %}
+                </div>
+                <div class="menu right ">
+                    <ul>
+                        {% set pageTitle = '' %}
+                        {% set currentPage = _view.fetch('hdrCurrentPage')|default(pageKey) %}
+                        {% for menu in headerMenu %}
+                        <li class="{% if menu.children or menu.Menu.name == 'collections' %} haveDrop {% endif %}">
+                            <a class="{{ menu.Menu.key == currentPage ? 'active' }} {{ menu.Menu.url == '/products/sales' ? 'saleLink' }}"
+                               href="{{ menu.Menu.url }}">{{ menu.Menu.name }}</a>
+                            {% if menu.children or menu.Menu.name == 'collections' %}
+                            <div class="drop" {% if menu.Menu.name == 'collections' %}style="width:300px"{% endif %}>
+                                <ul>
+                                    {% if menu.Menu.name == 'collections' %}
+                                    {% for menuCategory in categories %}
+                                    <li><a href="/products/collection/{{ menuCategory.Category.key }}">{{ menuCategory.Category.name }}</a></li>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% for subMenu in menu.children %}
+                                    <li><a href="{{ subMenu.Menu.url }}">{{ subMenu.Menu.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                            {% if menu.Menu.key == currentPage %}
+                                {% set pageTitle = menu.Menu.name %}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="headerContent {% if _view.fetch('homepage') == '1' %}mainPageHeaderContent{% endif %} left fullWidth">
+        <div class="container">
+            <div class="tableDiv">
+                <div class="tableCell">
+                    <h1 class="customTitle" {% if _view.fetch('homepage') == '1' %}style="color: #000;"{% endif %}>{{ _view.fetch('hdrPageTitle')|default(pageTitle)|upper }}</h1>
+                    {{ _view.fetch('hdrCustomTitleElement') }}
+                </div>
+            </div>
+        </div>
+        {{ _view.fetch('hdrCustomHeaderControl') }}
+    </div>
+</div>
+<script>
+window.callbackManager.push('after-login', function(){
+    $('#AuthUserNav').show();
+    $('#NonAuthUserNav').hide();
+});
+</script>

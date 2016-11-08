@@ -1,0 +1,32 @@
+{{ _view.assign('fullHeightBackground', 'yes') }}
+{{ _view.assign('homepage', '1') }}
+
+{% if options %}
+    {{ _view.assign('hdrPageTitle', options.where_r_u)}}
+{% else %}
+    {{ _view.assign('hdrPageTitle', 'WHERE ARE YOU ON THE GO <span style="font-size: 110%;font-weight: 900;">?</span>') }}
+{% endif %}
+{{ _view.assign('hdrBgImage', 'img/header-homepage.png') }}
+
+{{ _view.assign('hdrCustomTitleElement', _view.element('home/header')) }}
+
+{{ _view.assign('hdrCustomHeaderControl', '<span class="slideDown"><i class="fa fa-angle-down"></i></span>') }}
+
+{% if about %}
+<div class="aboutSection left fullWidth backgroundImage" style="background-image:url('img/about-bg.jpg');">
+    <div class="container">
+        <div class="aboutVideo left half">
+            {{ about.Static.media }}
+            <div class="simpleText" style="margin-top: 0;">
+                <p style="padding: 25px 0 0;text-align: center;font-size: 32px; font-style: italic">“Life made simple with an extra shot of happiness”</p>
+            </div>
+        </div>
+        <div class="aboutText right half">
+            <div class="simpleText" style="margin-top: 0;">
+                <h2>{{ about.Static.title }}</h2>
+                <p>{{ about.Static.text }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}

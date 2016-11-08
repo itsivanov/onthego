@@ -1,0 +1,117 @@
+<div class="footerSection left fullWidth">
+    <div class="container">
+
+        {% for menu in footerMenu %}
+            <div class="item">
+                <div class="footerCategory left fullWidth">
+                    {{ menu.Menu.name }}
+                </div>
+                {% if menu.Menu.name == 'contact' %}
+                    <ul class="contactList">
+                        {% if options.address %}
+                            <li>
+                                <div class="ico">
+                                    <div class="tableDiv">
+                                        <div class="tableCell"> <img src="/img/loc-ico.png" alt="" title=""> </div>
+                                    </div>
+                                </div>
+                                {{ options.address }}
+                            </li>
+                        {% endif %}
+                        {% if options.phone %}
+                            <li>
+                                <div class="ico">
+                                    <div class="tableDiv">
+                                        <div class="tableCell"> <img src="/img/phone-ico.png" alt="" title=""> </div>
+                                    </div>
+                                </div>
+                                {{ options.phone }}
+                            </li>
+                        {% endif %}
+                        {% if options.email %}
+                            <li>
+                                <div class="ico">
+                                    <div class="tableDiv">
+                                        <div class="tableCell"> <img src="/img/mail-ico.png" alt="" title=""> </div>
+                                    </div>
+                                </div>
+                                {{ options.email}}
+                            </li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
+                <ul>
+
+                    {% if menu.Menu.name == 'my account' %}
+                        {% if isAuth %}
+                            <li><a href="/users/account">My Account</a></li>
+                            <li><a href="/users/orders">Order History</a></li>
+                            <li><a href="/users/rewards">Loyalty Program</a></li>
+                            {#<li><a href="/users/logout">Logout</a></li>#}
+                        {% else %}
+                            <li><a href="#" class="login">Login</a></li>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if menu.Menu.name == 'collections' %}
+                        {% for menuCategory in categories %}
+                            <li><a href="/products/collection/{{ menuCategory.Category.key }}">{{ menuCategory.Category.name }}</a></li>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% for subMenu in menu.children %}
+                        <li><a href="{{ subMenu.Menu.url }}"
+                               class="{{ subMenu.Menu.url == '/products/sales' ? 'redFont' }}">{{ subMenu.Menu.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+
+        <div class="item">
+            <div class="footerCategory left fullWidth">
+                Connect
+            </div>
+            <ul class="socialVerticalList">
+                {% if options.facebook %}
+                    <li>
+                        <a href="{{ options.facebook }}" class="socLink left" target="_blank"> <img src="/img/fb.png" alt="" title=""> Facebook</a>
+                    </li>
+                {% endif %}
+                {% if options.twitter %}
+                    <li>
+                        <a href="{{ options.twitter }}" class="socLink left" target="_blank"> <img src="/img/tw.png" alt="" title=""> Twitter</a>
+                    </li>
+                {% endif %}
+                {% if options.instagram %}
+                    <li>
+                        <a href="{{ options.instagram }}" class="socLink left" target="_blank"> <img src="/img/inst.png" alt="" title=""> Instagram</a>
+                    </li>
+                {% endif %}
+                {% if options.pinterest %}
+                <li>
+                    <a href="{{ options.pinterest }}" target="_blank" class="socLink left"> <img src="/img/pt.png" alt="" title=""> Pinterest</a>
+                </li>
+                {% endif %}
+                {% if options.google %}
+                <li>
+                    <a href="{{ options.google }}" class="socLink left" target="_blank"> <img src="/img/gl.png" alt="" title=""> Google+</a>
+                </li>
+                {% endif %}
+
+                {% if options.linkedin %}
+                <li>
+                    <a href="{{ options.linkedin }}" class="socLink left" target="_blank"> <img src="/img/ld.png" alt="" title=""> Linkedin</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="left fullWidth" style="position: relative;margin-bottom: 20px;">
+            <a href="/our-story" class="outLogo perHalf right" style="bottom: 0;">
+                <img src="/img/logo-out.jpg" alt="" title="">
+            </a>
+            <span class="copy left fullWidth" style="    font: 13px/13px 'Couture'; ">
+                {{ options.copyright }}
+            </span>
+        </div>
+    </div>
+</div>

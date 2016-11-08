@@ -1,0 +1,231 @@
+{{ _view.element('widgets/editor') }}
+
+{{ _view.start('captionHeader') }}
+    <div class="header"><span><i class="fa fa-gift"></i> Products</span>
+{{ _view.end() }}
+
+<style>
+    .properties{
+        margin-bottom: 70px;
+    }
+
+    .properties div{
+        width: auto; float: left; margin: 0 20px; border: 0;
+    }
+</style>
+
+    <div class="boxtitle min"><i class="fa fa-pencil"></i> {{ category.Category.name }}: {% if data.Product.id %}Edit{% else %}Add new{% endif %} Product</div>
+    <ul class="uibutton-group">
+        <li><a href="/admin/products/{{ category.Category.id }}" class="uibutton special"><i class="fa fa-list-ol"></i> {{ category.Category.name }} - Product list</a></li>
+    </ul>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#data">Product info</a></li>
+            <li><a href="#images">Images</a></li>
+        </ul>
+
+        {{ form.create({'class' : 'form'}) }}
+        {{ form.hidden('Product.id') }}
+        {{ form.hidden('Product.category_id') }}
+        <div id="data">
+            <div class="section">
+                <label>Active</label>
+                <div>{{ form.checkbox('active') }}</div>
+            </div>
+            <div class="section">
+                <label>Show on sales page</label>
+                <div>{{ form.checkbox('on_sale') }}</div>
+            </div>
+
+            <div class="section">
+                <label>Title</label>
+                <div>{{ form.input('title', {'div' : false, 'label' : false, 'required' : 'required', 'placeholder':'Title'}) }}</div>
+            </div>
+
+            <div class="section">
+                <label>Price</label>
+                <div>{{ form.input('price', {'div' : false, 'label' : false, 'required' : 'required', 'placeholder':'Price'}) }}</div>
+            </div>
+
+            <div class="section">
+                <label>Dimensions (Inches)</label>
+                <div class="dimensions">
+                    {{ form.input('width', {'div' : false, 'label' : false, 'required' : 'required', 'placeholder':'Width'}) }}
+                    {{ form.input('height', {'div' : false, 'label' : false, 'required' : 'required', 'placeholder':'Height'}) }}
+                    {{ form.input('length', {'div' : false, 'label' : false, 'required' : 'required', 'placeholder':'Length'}) }}
+                </div>
+            </div>
+
+            <div class="section">
+                <label>Weight (lbs)</label>
+                <div class="dimensions">
+                    {{ form.input('weight', {'div' : false, 'label' : false, 'required' : 'required', 'placeholder':'Weight'}) }}
+                </div>
+            </div>
+
+            <div class="section">
+                <label>SKU</label>
+                <div>
+                    <div>{{ form.input('sku', {'div' : false, 'label' : false, 'required' : 'required', 'placeholder':'SKU'}) }}</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <label>Short description</label>
+                <div>
+                    <div>{{ form.input('short_description', {'type':'textarea', 'class' : 'wysiwyg', 'label' : false}) }}</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <label>Description</label>
+                <div>
+                    <div>{{ form.input('description', {'type':'textarea', 'class' : 'wysiwyg', 'label' : false}) }}</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <label>Featured</label>
+                <div>
+                    <div>{{ form.input('featured', {'type':'textarea', 'class' : 'wysiwyg', 'label' : false}) }}</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <label>Product url</label>
+                <div>{{ form.input('url', {'div' : false, 'label' : false, 'placeholder':'Product url'}) }}</div>
+            </div>
+
+            <div class="section banner-section">
+                <label>Meta title</label>
+                <div>{{ form.input('meta_title', {'div' : false, 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>Meta keywords</label>
+                <div>{{ form.input('meta_keywords', {'div' : false, 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>Meta description</label>
+                <div>{{ form.input('meta_description', {'div' : false, 'label' : false}) }}</div>
+            </div>
+
+        </div>
+        <div id="images">
+            <section class="section">
+                <h4>Images</h4><span>Please drag-and-drop to change order</span>
+                    <div id="photosContainer" class="clearfix">
+                    <ul class="listPhotos" id="ulListPhotos">
+                        {% for item in data.ProductImages %}
+                            <li class="clearfix imageBlock">
+                                <div class="dottedFrame" style="position: relative">
+                                    <span><img src="{{ item.img|thumb(130,100) }}"></span>
+                                    <input type="hidden" name="data[ProductImages][{{ loop.index0 }}][img]" value="{{ item.img }}">
+                                    <input type="hidden" class="hidden-priority" name="data[ProductImages][{{ loop.index0 }}][priority]" value="{{ item.priority }}">
+                                </div>
+                                <div class="text-center">
+                                    <a href="javascript:" class="uibutton special loading remove-img"><i class="fa fa-trash"></i></a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    </div>
+            </section>
+
+            <div class="section last">
+                <div><a href="javascript:" class="uibutton loading" id="uploadImage">Upload image</a></div>
+            </div>
+        </div>
+
+
+
+        <div class="section last">
+            <div>
+                {{ form.submit('Save', {'class' : 'uibutton loading'}) }}
+            </div>
+        </div>
+        {{ form.end() }}
+    </div>
+</div>
+
+<style>
+    .dimensions input {
+        width: 10%;
+        min-width: 80px;
+    }
+</style>
+
+<script type="text/javascript">
+    $(function() {
+        $("#tabs").tabs();
+
+        $('.wysiwyg').elrte(opts);
+
+        $(document).on('click', '#imageId', function(e) {
+            e.preventDefault();
+            var thisBtn = $(e.currentTarget);
+            $("<div />").dialogelfinder({
+                width: 850,
+                url: '/js/elfinder2/connector.php',
+                commandsOptions: {
+                    getfile: {
+                        oncomplete: 'destroy' // destroy elFinder after file selection
+                    }
+                },
+                getFileCallback: function (url) {
+                    $('#imageInput').val(url);
+                    thisBtn.attr('src', url);
+                }
+            });
+        });
+
+        var i = '{{ data.ProductImages[(data.ProductImages | length-1)].id }}';
+
+        $('.listPhotos').sortable({
+            update: function(){
+                $('.listPhotos li').each(function(index){
+                    $(this).find('.hidden-priority').val(index);
+                });
+            }
+        });
+
+        $(document).on('click', '#uploadImage', function() {
+            var a = $(this);
+
+            $("<div />").dialogelfinder({
+                width: 850,
+                url: '/js/elfinder2/connector.php',
+                commandsOptions: {
+                    getfile: {
+                        oncomplete: 'destroy' // destroy elFinder after file selection
+                    }
+                },
+
+                getFileCallback: function (url) {
+
+                    var ii = i++;
+
+                    $('.listPhotos').append('' +
+                    '<li class="clearfix imageBlock">' +
+                        '<div class="dottedFrame" style="position: relative">'+
+                            '<span><img src="/thumbs/130x100'+ url +'"></span>' +
+                            '<input type="hidden" name="data[ProductImages][' +ii+ '][img]" value="'+ url +'">' +
+                            '<input type="hidden" class="hidden-priority" name="data[ProductImages][' +ii+ '][priority]" value="'+ii+'">' +
+                        '</div>'+
+                        '<div class="text-center">'+
+                            '<a href="javascript:" class="uibutton special loading remove-img"><i class="fa fa-trash"></i></a>'+
+                        '</div>' +
+                    '</li>');
+
+                    showSuccess('Image uploaded successfully', 500);
+                }
+            });
+        });
+
+        $(document).on('click', '.remove-img', function(e) {
+            e.preventDefault();
+            $(this).parents('.imageBlock').remove();
+        });
+
+    });
+</script>

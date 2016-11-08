@@ -1,0 +1,120 @@
+{{ _view.assign('hdrPageTitle', 'Blog') }}
+{{ _view.assign('hdrCurrentPage', 'blog') }}
+{{ _view.assign('hdrBgImage', '/img/blog-bg.jpg') }}
+
+
+<div class="blogSingle left fullWidth">
+    <div class="container">
+        <div class="blogSingleContent left fu">
+            <div class="blogTitle left textLeft fullWidth">
+                {{ news.Tiding.title }}
+                <div class="blogCommentsNumber">
+                    {{ news.Tiding.active_tidcomment_count }}
+                </div>
+            </div>
+            <div class="blogAuthor left fullWidth textLeft">
+                {{ news.Tiding.subtitle }}
+            </div>
+            <div class="simpleText left fullWidth textjustify">
+                {{ news.Tiding.full_content }}
+            </div>
+            <div class="blogAddInfo left fullWidth">
+                <div class="left fullWidth"><strong>Category: </strong><a href="/blog/category/{{news.TidCategory.title}}">{{ news.TidCategory.title }}</a></div>
+                {% if news.Tag %}
+                <div class="left fullWidth"><strong>Tags: </strong>
+                    {% for tag in news.Tag %}
+                        <a href="/blog/tag/{{ tag.title }}">{{ tag.title }} {{ loop.last ? '' : ', ' }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="commentsWrapper left fullWidth">
+                <h4 class="customH4">COMMENTS</h4>
+                <div class="left fullWidth blogComments">
+                    {% for comment in news.TidComment %}
+                    <div class="blogComment left fullWidth">
+                        <div class="left fullWidth commentAuthor">{{ comment.name }}</div>
+                        <div class="left fullWidth commentDate">{{ comment.created|date("M j, Y")}}</div>
+                        <div class="left fullWidth commentText">{{ comment.content }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="commentForm left fullWidth">
+                <h4 class="customH4">leave a reply</h4>
+                <div class="form">
+                    {{ form.create('TidComment',{'id':'CommentForm','action':'add_contact','default':false}) }}
+                    {{ form.input('tiding_id',{'type':'hidden','value':news.Tiding.id}) }}
+                        <div class="palmCustomInput iconForm left perHalf">
+                            {{ form.input('name', {'type':'text','label':false,'div':false,'placeholder':'Full Name'}) }}
+                            <div class="ico">
+                                <div class="tableDiv">
+                                    <div class="tableCell">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="palmCustomInput iconForm right perHalf">
+                            {{ form.input('email', {'type':'text','label':false,'div':false,'placeholder':'Email'}) }}
+                            <div class="ico">
+                                <div class="tableDiv">
+                                    <div class="tableCell">
+                                        <i class="fa fa-envelope"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="palmCustomTextarea iconForm left fullWidth">
+                            {{ form.textarea('content',{'label':false,'div':false,'placeholder':'Comment'}) }}
+                            <div class="ico">
+                                <div class="tableDiv">
+                                    <div class="tableCell">
+                                        <i class="fa fa-pencil"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="submit" class="button btnBlack transparentBtn right" value="Submit Comment">
+                    {{ form.end() }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#CommentForm").bind("submit", function (event) {
+            $.ajax({
+                async:true,
+                data:$("#CommentForm").closest("form").serialize(),
+                success:function (data, textStatus) {
+                    var data = JSON.parse(data);
+
+                    if(data.err){
+                        var validation = JSON.parse(data.validation);
+                        $("#CommentForm span.error").remove();
+                        for(var field_name in validation){
+                            $("#CommentForm *[name='data[Signup]["+ field_name +"]']").after("<span class='error'>"+ validation[field_name] +"</span>");
+                            $("#CommentForm *[name='data[Contact]["+ field_name +"]']").after("<span class='error'>"+ validation[field_name] +"</span>");
+                        }
+                    }else{
+                        $("#CommentForm span.error").remove();
+
+                        $.pnotify({
+                            title: "Thanks you for contacting us",
+                            text: "Comment  was saved. Admin will check it asap. ",
+                            type: "success"
+                        });
+
+                        $("#CommentForm")[0].reset();
+                    }
+                },
+                type:"POST",
+                url:"/tidings/add_comment"
+            });
+            return false;
+        });
+    });
+</script>

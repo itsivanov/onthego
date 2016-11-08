@@ -1,0 +1,129 @@
+{{ _view.assign('hdrPageTitle', 'Blog') }}
+{{ _view.assign('hdrCurrentPage', 'blog') }}
+{{ _view.assign('hdrBgImage', '/img/blog-bg.jpg') }}
+
+<div class="blogWrapper left fullWidth">
+    <div class="container" id="resultsDiv">
+        {% for item in news %}
+        <div class="blogListItem left fullWidth">
+            {% set itemImage %}
+            <div class="blogPhoto half backgroundImage" style="background-image:url('/thumbs/470x270{{ item.Tiding.img }}');">
+                {% if item.Tiding.img is empty %}
+                    <div class="blogImageDefault">
+                        <div class="tableDiv">
+                            <div class="tableCell">
+                                <i class="fa fa-camera"></i>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                <img src="/img/blog-mask.png" alt="" title="">
+                <div class="blogDate">
+                    <div class="tableDiv">
+                        <div class="tableCell">
+                            <div class="date">{{ item.Tiding.created|date("M j") }}</div>
+                            <div class="year">{{ item.Tiding.created|date("Y") }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endset %}
+            {% set itemContent %}
+            <div class="blogContent half">
+                <div class="blogListContent left fullWidth">
+                    <div class="blogTitle left textLeft fullWidth">
+                        {{ item.Tiding.title }}
+                    </div>
+                    <div class="blogAuthor left fullWidth textLeft">
+                        {{ item.Tiding.subtitle }}
+                    </div>
+                    <div class="blogText left fullWidth textLeft">
+                        {{ item.Tiding.content }}
+                    </div>
+                </div>
+                <a href="/one-post/{{ item.Tiding.slug }}" class="button btnBlack transparentBtn upper left">read more</a>
+            </div>
+            {% endset %}
+            {% if loop.index is odd %}
+                {{ itemImage }}
+                {{ itemContent }}
+            {% else %}
+                {{ itemContent }}
+                {{ itemImage }}
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% if _view.Paginator.hasNext() %}
+        <div class="moreBlogs left fullWidth">
+            <div class="tableDiv">
+                <div class="tableCell" id="more_category">
+                    <div>show more</div>
+                    <div><i class="fa fa-angle-down"></i></div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="slideUp"><i class="fa fa-angle-up"></i></div>
+<script>
+    $(document).ready(function () {
+        var counter = parseInt('{{ _view.Paginator.counter('{:pages}') }}');
+
+        var ajax= true;
+        $('#more_category').on('click',function(){
+            if (ajax && counter > 1) {
+                ajax = false;
+                $.ajax({
+                    url: ('/blog/{{ active_sort }}/page:'+counter),
+                    cache: false,
+                    type: 'GET',
+                    dataType: 'HTML',
+                    success: function (data) {
+                        $('#more_category').attr('data-value',(parseInt($('#more_category').attr('data-value'))+1));
+                        $('#resultsDiv').append(data);
+                        ajax = true;
+                        counter--;
+                        if (counter <= 1) {
+                            $('.moreBlogs').remove();
+                        }
+                    }
+                });
+            }
+
+            return false;
+        });
+
+        $('.like').click(function(){
+            $.blockUI();
+            var obj = $(this);
+            $.getJSON( obj.attr('href'), function( data ) {
+                if(data.error)
+                {
+                    $.pnotify({
+                        title: data.msg_title,
+                        text: data.msg,
+                        type: "error"
+                    });
+                }
+                else
+                {
+                    if(data.likes)
+                    {
+                        obj.html('<i class="fa fa-thumbs-up"></i>'+data.likes);
+                    }
+                    $.pnotify({
+                        title: data.msg_title,
+                        text: data.msg,
+                        type: "success"
+                    });
+                }
+
+                $.unblockUI();
+            });
+            return false;
+        })
+    });
+</script>
+

@@ -1,0 +1,33 @@
+{{ _view.start('captionHeader') }}
+<div class="header"><span><span class="ico gray paragraph_align_right"></span> Type of Menus </span>
+{{ _view.end() }}
+
+    <!-- title box -->
+    <div class="boxtitle min">List of types</div>
+    {#<ul class="uibutton-group">#}
+        {#<li><a href="/admin/menus/addType" class="uibutton icon add" title="Add Product">Add Type of menu</a></li>#}
+    {#</ul>#}
+
+    <div class="tableName">
+
+        {% if menus %}
+        <ul class="menus_block">
+            {% for menu in menus %}
+                <li data-id="{{ menu.SiteMenu.id }}" class="itemTypeMenu">{{ menu.SiteMenu.name }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+
+        {% endif %}
+
+        <span style="" class="italicSubCaption">Double Click for Edit</span>
+
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.menus_block li').dblclick(function(){
+                window.location = '/admin/menus/menu/' +  $(this).attr('data-id');
+            })
+        });
+    </script>

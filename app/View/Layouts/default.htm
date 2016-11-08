@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" class="main-body">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <title>{{ metaTitle|default('Products On The Go') }}</title>
+    <meta name="description" content="{{ metaDesc }}" />
+    <meta name="keywords" content="{{ metaKey }}" />
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true&amp;language=en"></script>
+
+    {{ minify.css([
+    'reset',
+    'font-awesome.min',
+    'slick',
+    'flexslider',
+    'style',
+    'grid',
+    '/js/fancybox/jquery.fancybox',
+    '/js/pnotify/jquery.pnotify.default'])
+    }}
+
+    {{ html.script([
+    'jquery-1.11.1',
+    'jquery.flexslider.js',
+    'slick',
+    'jquery.tinyscrollbar',
+    'jquery.selectbox',
+    'functions',
+    'custom.scripts',
+    'jquery.zoom',
+    'fancybox/jquery.fancybox.pack',
+    'pnotify/jquery.pnotify.min'])
+    }}
+
+    {{ session.flash('flash') }}
+
+    <script>
+        var team_address = '{{ options.address|striptags|e }}';
+    </script>
+
+    <style>
+        /* dyn styles */
+        {% if categories %}
+            {% set catToClass = {
+                1: 'firstBrand',
+                2: 'secondBrand',
+                3: 'thirdBrand',
+                4: 'fourthBrand',
+                5: 'firstBrand.fiveBrand'
+            } %}
+            {% for category in categories  %}
+                {% if catToClass[loop.index] %}
+                .headerSection .headerContent .brandsHeader .item.{{ catToClass[loop.index] }} .brandInfo .brandTitle:after {
+                    background: {{ category.Category.color }};
+                }
+                .headerSection .headerContent .brandsHeader .item.{{ catToClass[loop.index] }} .brandInfo .moreLink {
+                    border: 3px solid {{ category.Category.color }};
+                    color: {{ category.Category.color }};
+                }
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </style>
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-66849311-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+
+</head>
+<body>
+
+{{ _view.element('header') }}
+
+{{ _view.fetch('content') }}
+
+{{ _view.element('footer') }}
+
+{{ _view.element('popUp') }}
+{#<div class="preLoader">#}
+    {#<img src="/img/black/logo.png" alt="" title="" class="loaderLogo">#}
+    {#<img src="/img/loading_spinner.gif" alt="" title="" class="loaderLoad">#}
+{#</div>#}
+
+
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+{{ _view.assign('hdrPageTitle', page.title) }}
+{{ _view.assign('hdrBgImage', '/img/blog-bg.jpg') }}
+
+
+<div class="aboutSection left fullWidth backgroundImage">
+    <div class="simpleText left fullWidth">
+        <div class="container">
+            <h3 class="custom-h3 left fullWidth"><span>{{ page.title }}</span></h3>
+            {{ page.content }}
+        </div>
+    </div>
+</div>

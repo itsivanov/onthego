@@ -1,0 +1,71 @@
+{{ _view.assign('hdrPageTitle', 'Contact us') }}
+{{ _view.assign('hdrCurrentPage', 'contact-us') }}
+{{ _view.assign('hdrBgImage', '/img/contact-header.jpg') }}
+{{ _view.assign('hdrAdditionalHeaderClass', 'contactHeader') }}
+
+{{ _view.assign('hdrCustomTitleElement', _view.element('contact/header')) }}
+
+<div class="contactByEmail left fullWidth backgroundImage" id="form">
+    <div class="container">
+        <div class="contactForm left fullWidth">
+            <h2 class="custom-h2 left fullWidth textCenter upper blackColor">Contact Us</h2>
+            <span class="subTitle simpleText left fullWidth textCenter">We work hard, so you don't have to. Please fill out the form below or '<a href="mailto:info@products-onthego.com">email us directly</a>' with any questions, concerns or feedback and a member of our team will get in touch with you shortly.</span>
+            <div class="left fullWidth">
+                <div class="form">
+                    {{ form.create('Contact', {'class' : 'contactForm', 'action' : '../contact-us#form'})}}
+                        <div class="palmCustomInput iconForm left fullWidth">
+                            {{ form.input('first_name', {'div' : false, 'class' : 'form-control', 'label' : false, 'required' : false, 'placeholder':'* Full Name'}) }}
+                            <div class="ico">
+                                <div class="tableDiv">
+                                    <div class="tableCell">
+                                        <i class="fa fa-user"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="palmCustomInput iconForm left perHalf">
+                            {{ form.input('email', {'div' : false, 'class' : 'form-control', 'label' : false, 'required' : false, 'placeholder':'* Email'}) }}
+                            <div class="ico">
+                                <div class="tableDiv">
+                                    <div class="tableCell">
+                                        <i class="fa fa-envelope"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="palmCustomInput iconForm right perHalf">
+                            {{ form.input('phone', {'div' : false, 'class' : 'form-control', 'label' : false, 'required' : false, 'placeholder':'* Phone'}) }}
+                            <div class="ico">
+                                <div class="tableDiv">
+                                    <div class="tableCell">
+                                        <i class="fa fa-mobile"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="palmCustomTextarea iconForm left fullWidth">
+                            {{ form.input('msg', {'div' : false, 'class' : 'form-control', 'type' : 'textarea', 'rows' : 7, 'required' : false, 'label' : false, 'placeholder':'* Comment'}) }}
+                            <div class="ico">
+                                <div class="tableDiv">
+                                    <div class="tableCell">
+                                        <i class="fa fa-pencil"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="submit" class="button btnBlack transparentBtn upper" value="Submit">
+                    {{ form.end() }}
+                </div>
+                <div class="messengerCode simpleText textCenter">
+                    <img src="img/messenger_code_993701593997767.png" alt="" title="">
+                    <p>Simple scan using the Facebook Messenger App to start a conversation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="map left fullWidth">
+    <div id="map_place" style="height:100%; width:100%;"></div>
+</div>

@@ -1,0 +1,25 @@
+<div class="brandsHeader">
+    {% set catToClass = {
+        1: 'firstBrand',
+        2: 'secondBrand',
+        3: 'thirdBrand',
+        4: 'fourthBrand',
+        5: 'firstBrand fiveBrand'
+    } %}
+    {% for category in categories  %}
+        {% if catToClass[loop.index] %}
+        <div class="item {{ catToClass[loop.index] }} category-id_{{ category.Category.id }}">
+            <a href="/products/collection/{{ category.Category.key }}" class="brandIco backgroundImage left fullWidth" style="background-image:url('{{ category.Category.home_page_icon }}');"></a>
+            <div class="brandInfo">
+            <span class="left fullWidth brandTitle textCenter" style="color: #000;">
+                {{ category.Category.name }}
+            </span>
+            <span class="left fullWidth brandText textCenter" style="color: #000;">
+                {{ category.Category.description_homepage|default(category.Category.description|truncate(100)) }}{##}
+            </span>
+                <a href="/products/collection/{{ category.Category.key }}" class="moreLink">More</a>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>

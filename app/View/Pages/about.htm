@@ -1,0 +1,35 @@
+{{ _view.assign('hdrPageTitle', 'About the Founder') }}
+{{ _view.assign('hdrBgImage', '/img/story-header.jpg') }}
+
+{% if about %}
+<div class="photoTextBlock left fullWidth">
+    <div class="container">
+        <div class="photoTextWrapper left fullWidth">
+            <div class="photoSide left">
+                <img src="{{ about.Static.media }}" alt="" title="">
+            </div>
+            <div class="textSide left">
+                <strong>{{ about.Static.title }}</strong>
+                <i>{{ about.Static.subtitle }}</i>
+                <p>{{ about.Static.text }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="photoTextList photoTextBlock left fullWidth">
+    <div class="container">
+        {% for publication in publications %}
+        <div class="photoTextItem left fullWidth">
+            <div class="photoSide left">
+                <img src="{{ publication.Publication.img }}" alt="" title="">
+            </div>
+            <div class="textSide left">
+                <strong>{{ publication.Publication.title }}</strong>
+                <i>{{ publication.Publication.subtitle }}</i>
+                <p>{{ publication.Publication.text }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

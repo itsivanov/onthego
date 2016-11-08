@@ -1,0 +1,196 @@
+{{ _view.start('captionHeader') }}
+<div class="header"><span><i class="fa fa-cart-arrow-down"></i> Orders</span>
+    {{ _view.end() }}
+
+    <div class="boxtitle min"><i class="fa fa-pencil"></i> Edit Order</div>
+    <ul class="uibutton-group">
+        <li><a href="/admin/orders" class="uibutton special"><i class="fa fa-list-ol"></i> Orders list</a></li>
+    </ul>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#data">Order data</a></li>
+            <li><a href="#items">Order Items</a></li>
+            <li><a href="#shipping">Shipping & Billing</a></li>
+        </ul>
+
+        {{ form.create({'class' : 'form'}) }}
+        {{ form.hidden('Order.id') }}
+        {{ form.hidden('OrderBillingInfo.id') }}
+        {{ form.hidden('OrderShippingInfo.id') }}
+        <div id="data">
+
+            <div class="section">
+                <label>Tracking number</label>
+                <div>{{ form.input('Order.tracking_number', {'div' : false, 'label' : false}) }}</div>
+            </div>
+
+            <div class="section">
+                <label>User</label>
+                <div>{% if _view.data.User.id %}<a href="/admin/users/edit/{{ _view.data.User.id }}">{{ '#'~_view.data.User.id~' '~_view.data.User.UserInfo.first_name~' '~_view.data.User.UserInfo.last_name }}</a>{% else %}<i>guest</i>{% endif %}</div>
+            </div>
+
+            <div class="section">
+                <label>Used POTG</label>
+                <div>{{ _view.data.Order.used_poins }}</div>
+            </div>
+
+            <div class="section">
+                <label>Order created</label>
+                <div>{{ _view.data.Order.created|date('m-d-Y') }}</div>
+            </div>
+
+            <div class="section">
+                <label>Status</label>
+                <div>{{ form.select('Order.order_status_id', statuses) }}</div>
+                {% if _view.data.Order.order_status_id == 3 %}
+            </div>
+            <div class="section">
+                <label>User Comment</label>
+                <div><textarea disabled>{{ _view.data.Order.cancel_reason }}</textarea></div>
+                {% endif %}
+            </div>
+
+            <div class="section">
+                <label>Amount</label>
+                <div>{{ form.input('Order.amount', {'div' : false, 'label' : false}) }}</div>
+            </div>
+
+            <div class="section">
+                <label>Shipping</label>
+                <div>{{ form.input('Order.shipping', {'div' : false, 'label' : false}) }}</div>
+            </div>
+
+            <div class="section">
+                <label>Shipping</label>
+                <div>{{ form.select('Order.shipping_service', {
+                        '14': 'UPS Next Day Air Early AM',
+                        '01': 'UPS Next Day Air',
+                        '13': 'Next Day Air Saver',
+                        '59': 'UPS Second Day Air AM',
+                        '02': 'UPS Second Day Air',
+                        '03': 'UPS Ground'
+                    } , {'div' : false, 'label' : false}) }}</div>
+            </div>
+
+            <div class="section">
+                <label>Comment</label>
+                <div>
+                    <div>{{ form.input('Order.comment', {'type':'textarea', 'label' : false}) }}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="items">
+            <h3>Items</h3>
+
+            <div class="tableName">
+                <table class="display static">
+                    <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in data.OrderItem %}
+                        <tr>
+                            <td><img src="{{ item.Product.img|thumb(100) }}"></td>
+                            <td><a href="/products/view/{{ item.Product.id }}" target="_blank">{{ item.Product.title }}</a></td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.Product.price}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div id="shipping">
+            <h3>Shipping & Billing</h3>
+
+            <br>
+            <h4 class="red">Billing data</h4>
+            <br>
+
+            <div class="section">
+                <label>First name</label>
+                <div>{{ form.input('OrderBillingInfo.first_name', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>Last name</label>
+                <div>{{ form.input('OrderBillingInfo.last_name', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>address 1</label>
+                <div>{{ form.input('OrderBillingInfo.address_1', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>address 2</label>
+                <div>{{ form.input('OrderBillingInfo.address_2', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>state</label>
+                <div>{{ form.input('OrderBillingInfo.state', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>phone</label>
+                <div>{{ form.input('OrderBillingInfo.phone', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>email</label>
+                <div>{{ form.input('OrderBillingInfo.email', {'type':'text', 'label' : false}) }}</div>
+            </div>
+
+            <br>
+            <h4 class="red">Shipping data</h4>
+            <br>
+
+            <div class="section">
+                <label>First name</label>
+                <div>{{ form.input('OrderShippingInfo.first_name', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>Last name</label>
+                <div>{{ form.input('OrderShippingInfo.last_name', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>address 1</label>
+                <div>{{ form.input('OrderShippingInfo.address_1', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>address 2</label>
+                <div>{{ form.input('OrderShippingInfo.address_2', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>state</label>
+                <div>{{ form.input('OrderShippingInfo.state', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>phone</label>
+                <div>{{ form.input('OrderShippingInfo.phone', {'type':'text', 'label' : false}) }}</div>
+            </div>
+            <div class="section">
+                <label>email</label>
+                <div>{{ form.input('OrderShippingInfo.email', {'type':'text', 'label' : false}) }}</div>
+            </div>
+        </div>
+
+        <div class="section last">
+            <div>
+                {{ form.submit('Save', {'class' : 'uibutton loading'}) }}
+            </div>
+        </div>
+        {{ form.end() }}
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        $("#tabs").tabs();
+    });
+</script>

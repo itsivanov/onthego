@@ -1,0 +1,63 @@
+{{ _view.start('captionHeader') }}
+    <div class="header"><span><i class="fa fa-gift"></i> Products</span>
+{{ _view.end() }}
+
+    <form action="/admin/products/savePositions" method="POST">
+    <div class="boxtitle min"><i class="fa fa-list-ol"></i> {{ category.Category.name }} - Product list</div>
+    <ul class="uibutton-group">
+        <li><a href="/admin/products/add/{{ category.Category.id }}" class="uibutton"><i class="fa fa-plus-square"></i> New product</a></li>
+        <li><a href="javascript:" class="uibutton save-positions"><i class="fa fa-save"></i> Save positions</a></li>
+    </ul>
+    <div class="tableName">
+        Please drag-and-drop rows to change products order
+    <br/>
+        <table class="display static">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Image</th>
+                <th>Status</th>
+                <th>Management</th>
+              </tr>
+            </thead>
+            <tbody class="product-list">
+            {% for item in list %}
+            <tr>
+                <td>{{ item.Product.title }}
+                    <input type="hidden" name="data[{{ loop.index0 }}][id]" value="{{item.Product.id}}"/>
+                    <input type="hidden" class="product-position" name="data[{{ loop.index0 }}][position]" value="{{item.Product.position}}"/>
+                </td>
+                <td><img src="{{ item.Product.img }}" width="100" /></td>
+                <td><i class="{{ item.Product.active ? 'green' : 'red' }} fa fa-check-circle"></i></td>
+                <td>
+                    <span class="tip">
+                        <a class="edit_link" title="Edit" href="/admin/products/edit/{{ item.Product.id }}"><i class="fa fa-pencil"></i></a>
+                    </span>
+                    <span class="tip">
+                        <a class="delete_link delete" title="Delete" href="/admin/products/delete/{{ item.Product.id }}"><i class="fa fa-trash"></i></a>
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {#{ _view.element('paginator') }#}
+    </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('.product-list').sortable({
+            update: function(){
+                $('.product-list tr').each(function(index){
+                    $(this).find('.product-position').val(index);
+                });
+            }
+        });
+        $('.save-positions').on('click', function(e){
+            e.preventDefault();
+            $(this).closest('form').submit();
+        });
+    });
+</script>

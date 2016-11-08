@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="Folders" default="tmp_chmod">
+
+    <property file="build.properties" />
+
+
+    <target name="tmp_chmod" description="TMP to writable">
+      <echo msg="CHMOD for files and folders" />
+      <exec command="chmod 0777 -R ${tmp.dir}" />
+      <exec command="chmod 0777 -R ${uploads.dir}" />
+      <exec command="chmod 0777 -R ${thumbs.dir}" />
+      <exec command="chown -R www-data:www-data ${tmp.dir}" />
+      <exec command="chmod a+x ${cakeConsole}" />
+    </target>
+
+    <target name="db_file_create" description="Create database.php">
+        <echo msg="Create database.php"/>
+        <input propertyName="dbName">DB name:</input>
+        <input propertyName="dbUser">DB user:</input>
+        <input propertyName="dbPass">DB password:</input>
+        <input propertyName="dbPrefix" defaultValue="vt_">DB prefix:</input>
+        <copy file="${config.dir}/database.php.default" tofile="${config.dir}/database.php" overwrite="true">
+            <filterchain>
+                <replacetokens begintoken="%%" endtoken="%%">
+                    <token key="user" value="${dbUser}"/>
+                    <token key="password" value="${dbPass}"/>
+                    <token key="database_name" value="${dbName}"/>
+                    <token key="prefix" value="${dbPrefix}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+
+    <!-- ********************* ACL Plugin ************************ -->
+    <target name="acl_install" description="Download and install ACL plugin">
+        <delete dir="${build.dir}/${b.acl.dir}" includeemptydirs="true" verbose="true" failonerror="false"/>
+        <input propertyName="dbName">DB name:</input>
+        <input propertyName="dbUser">DB user:</input>
+        <input propertyName="dbPass">DB password:</input>
+
+        <echo msg="Create build directory"/>
+        <mkdir dir="${build.dir}/${b.acl.dir}"/>
+        <echo msg="Downloading ACL pack from VizualTech CMS-LIBS"/>
+        <exec command="wget -O ${build.dir}/${b.acl.dir}/${aclTar} ${cms.lib.acl}/${aclTar}"/>
+        <exec command="wget -O ${build.dir}/${b.acl.dir}/${aclSQL} ${cms.lib.acl}/${aclSQL}"/>
+        <untar file="${build.dir}/${b.acl.dir}/${aclTar}" todir="app">
+            <fileset dir=".">
+                <include name="*.tar.gz"/>
+                <include name="*.tar"/>
+            </fileset>
+        </untar>
+        <echo msg="Importing ACL tables to DB"/>
+        <pdosqlexec url="mysql:host=localhost;dbname=${dbName}" userid="${dbUser}" password="${dbPass}">
+            <fileset dir="${build.dir}/${b.acl.dir}">
+                <include name="${aclSQL}"/>
+            </fileset>
+        </pdosqlexec>
+        <echo msg="Update ACO/ARO tables"/>
+        <exec command="./${cakeConsole} AclExtras.AclExtras aco_sync" />
+        <delete dir="${build.dir}/${b.acl.dir}" includeemptydirs="true" verbose="true" failonerror="false" />
+        <echo msg="All is fine, baby"/>
+    </target>
+    <!-- *********************************************************** -->
+
+
+    <!-- ********************* Admin Plugin ************************ -->
+    <target name="admin_install" description="Download and install Admin plugin">
+        <delete dir="${build.dir}/${b.admin.dir}" includeemptydirs="true" verbose="true" failonerror="false"/>
+        <input propertyName="dbName">DB name:</input>
+        <input propertyName="dbUser">DB user:</input>
+        <input propertyName="dbPass">DB password:</input>
+
+        <echo msg="Create build directory"/>
+        <mkdir dir="${build.dir}/${b.admin.dir}"/>
+        <echo msg="Downloading Admin pack from VizualTech CMS-LIBS"/>
+        <exec command="wget -O ${build.dir}/${b.admin.dir}/${adminTar} ${cms.lib.admin}/${adminTar}"/>
+        <exec command="wget -O ${build.dir}/${b.admin.dir}/${adminSQL} ${cms.lib.admin}/${adminSQL}"/>
+        <untar file="${build.dir}/${b.admin.dir}/${adminTar}" todir="app">
+            <fileset dir=".">
+                <include name="*.tar.gz"/>
+                <include name="*.tar"/>
+            </fileset>
+        </untar>
+        <echo msg="Importing Admin tables to DB"/>
+        <pdosqlexec url="mysql:host=localhost;dbname=${dbName}" userid="${dbUser}" password="${dbPass}">
+            <fileset dir="${build.dir}/${b.admin.dir}">
+                <include name="${adminSQL}"/>
+            </fileset>
+        </pdosqlexec>
+        <echo msg="Admin user data - "/>
+        <input propertyName="adminName" defaultValue="admin">Username(for admin):</input>
+        <input propertyName="adminPass" defaultValue="admin">Password:</input>
+        <exec command="./${cakeConsole} add_user ${adminName} ${adminPass}" />
+        <echo msg="Update ACO/ARO tables"/>
+        <exec command="./${cakeConsole} AclExtras.AclExtras aco_sync" />
+        <delete dir="${build.dir}/${b.admin.dir}" includeemptydirs="true" verbose="true" failonerror="false" />
+        <echo msg="All is fine, baby"/>
+    </target>
+    <!-- *********************************************************** -->
+
+    <target name="update_acl" description="Update ACO/ARO">
+        <echo msg="Update ACO/ARO tables"/>
+        <exec command="./${cakeConsole} AclExtras.AclExtras aco_sync"/>
+    </target>
+
+    <!-- ********************* Ajax Component ************************ -->
+    <target name="ajax_install" description="Download and install GoodAjax component">
+        <delete dir="${build.dir}/${b.ajax.dir}" includeemptydirs="true" verbose="true" failonerror="false"/>
+
+        <echo msg="Create build directory"/>
+        <mkdir dir="${build.dir}/${b.ajax.dir}"/>
+        <echo msg="Downloading Ajax pack from VizualTech CMS-LIBS"/>
+        <exec command="wget -O ${build.dir}/${b.ajax.dir}/${ajaxTar} ${cms.lib.ajax}/${ajaxTar}"/>
+        <untar file="${build.dir}/${b.ajax.dir}/${ajaxTar}" todir="app">
+            <fileset dir=".">
+                <include name="*.tar.gz"/>
+                <include name="*.tar"/>
+            </fileset>
+        </untar>
+        <delete dir="${build.dir}/${b.ajax.dir}" includeemptydirs="true" verbose="true" failonerror="false" />
+        <echo msg="All is fine, baby"/>
+    </target>
+    <!-- *********************************************************** -->
+
+
+</project>

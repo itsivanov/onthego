@@ -1,0 +1,227 @@
+{{ _view.element('widgets/editor') }}
+
+{{ _view.start('captionHeader') }}
+    <div class="header"><span><i class="fa fa-gift"></i> Products</span>
+{{ _view.end() }}
+
+<style>
+    .properties{
+        margin-bottom: 70px;
+    }
+
+    .properties div{
+        width: auto; float: left; margin: 0 20px; border: 0;
+    }
+</style>
+
+    <div class="boxtitle min"><i class="fa fa-pencil"></i> Edit Product</div>
+    <ul class="uibutton-group">
+        <li><a href="/admin/products" class="uibutton special"><i class="fa fa-list-ol"></i> Products list</a></li>
+    </ul>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#data">Product data</a></li>
+            {#<li><a href="#categories">Categories</a></li>#}
+            <li><a href="#images">Images</a></li>
+            <li><a href="#properties">Properties</a></li>
+        </ul>
+
+        {{ form.create({'class' : 'form'}) }}
+        <div id="data">
+            <div class="section">
+                <label>Title</label>
+                <div>{{ form.checkbox('active') }}</div>
+            </div>
+
+            <div class="section">
+                <label>Product type</label>
+                <div>{{ form.select('Product.product_type_id', productTypes, {'value':1}) }}</div>
+            </div>
+
+            <div class="section">
+                <label>Category</label>
+                <div>{{ form.select('Product.category_id', categoriesList, {'value':1}) }}</div>
+            </div>
+
+            <div class="section">
+                <label>Title</label>
+                <div>{{ form.input('title', {'div' : false, 'label' : false, 'required' : 'required', 'placeholder':'Title'}) }}</div>
+            </div>
+
+            <div class="section">
+                <label>Main Image</label>
+                <div>
+                    {{ form.hidden('img', {'div': false, 'label': false, 'id':'imageInput'}) }}
+                    <img src="{{ data.Product.img|default('/img/no_image/default.png') }}" width="150" id="imageId"/>
+                </div>
+            </div>
+
+            <div class="section">
+                <label>Text</label>
+                <div>
+                    <div>{{ form.input('text', {'type':'textarea', 'id' : 'wysiwyg', 'label' : false}) }}</div>
+                </div>
+            </div>
+        </div>
+
+        {#<div id="categories">#}
+            {#<div class="section">#}
+                {#<label>Categories</label>#}
+                {#<div>#}
+                    {#<select name="data[Category]" multiple class="selectBox">#}
+                        {#{% for item, val in categoriesList %}#}
+                            {#&#123;&#35;<p>{{ item }} - {{ val }}</p>&#35;&#125;#}
+                            {#<option value="{{ item }}">{{ val }}</option>#}
+                        {#{% endfor %}#}
+                    {#</select>#}
+                {#</div>#}
+            {#</div>#}
+        {#</div>#}
+
+        <div id="images">
+            <section class="section">
+                <h4>Images</h4>
+                    <div id="photosContainer" class="clearfix">
+                        <ul class="listPhotos" id="ulListPhotos"></ul>
+                    </div>
+            </section>
+
+            <div class="section last">
+                <div><a href="javascript:" class="uibutton upload" id="uploadImage">Upload image</a></div>
+            </div>
+        </div>
+
+        <div id="properties">
+            <h3>Types</h3>
+            <div class="properties">
+            {% for key, value in properties.type %}
+            <div>
+                <label for="{{ 'type-'~loop.index }}">{{ value }}</label>
+                <input type="checkbox" id="{{ 'type-'~loop.index }}" name="data[Type][][type_id]" value="{{ key }}">
+            </div>
+            {% endfor %}
+            </div>
+
+            <h3>Shape</h3>
+            <div class="properties">
+            {% for key, value in properties.shape %}
+            <div>
+                <label for="{{ 'shape-'~loop.index }}">{{ value }}</label>
+                <input type="checkbox" id="{{ 'shape-'~loop.index }}" name="data[Shape][][shape_id]" value="{{ key }}">
+            </div>
+            {% endfor %}
+            </div>
+
+            <h3>Material</h3>
+            <div class="properties">
+            {% for key, value in properties.material %}
+            <div>
+                <label for="{{ 'material-'~loop.index }}">{{ value }}</label>
+                <input type="checkbox" id="{{ 'material-'~loop.index }}" name="data[Material][][material_id]" value="{{ key }}">
+            </div>
+            {% endfor %}
+            </div>
+
+            <h3>Neck Finish</h3>
+            <div class="properties">
+            {% for key, value in properties.neck %}
+            <div>
+                <label for="{{ 'neck-'~loop.index }}">{{ value }}</label>
+                <input type="checkbox" id="{{ 'neck-'~loop.index }}" name="data[Neck][][neck_id]" value="{{ key }}">
+            </div>
+            {% endfor %}
+            </div>
+
+            <h3>Color</h3>
+            <div class="properties">
+            {% for key, value in properties.color %}
+            <div>
+                <label for="{{ 'color-'~loop.index }}">{{ value }}</label>
+                <input type="checkbox" id="{{ 'color-'~loop.index }}" name="data[Color][][color_id]" value="{{ key }}">
+            </div>
+            {% endfor %}
+            </div>
+
+            <h3>Capacity</h3>
+            <div class="properties">
+
+
+            {% for key, value in properties.capacity %}
+            <div>
+                <label for="{{ 'capacity-'~loop.index }}">{{ value }}</label>
+                <input type="checkbox" id="{{ 'capacity-'~loop.index }}" name="data[Capacity][][capacity_id]" value="{{ key }}">
+            </div>
+            {% endfor %}
+            </div>
+         </div>
+
+        <div class="section last">
+            <div>
+                {{ form.submit('Save', {'class' : 'uibutton loading'}) }}
+            </div>
+        </div>
+        {{ form.end() }}
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        $("#tabs").tabs();
+
+        $('#wysiwyg').elrte(opts);
+
+        $(document).on('click', '#imageId', function(e) {
+            e.preventDefault();
+            var thisBtn = $(e.currentTarget);
+            $("<div />").dialogelfinder({
+                width: 850,
+                url: '/js/elfinder2/connector.php',
+                commandsOptions: {
+                    getfile: {
+                        oncomplete: 'destroy' // destroy elFinder after file selection
+                    }
+                },
+                getFileCallback: function (url) {
+                    $('#imageInput').val(url);
+                    thisBtn.attr('src', url);
+                }
+            });
+        });
+
+        $(document).on('click', '#uploadImage', function() {
+            var a = $(this);
+
+            $("<div />").dialogelfinder({
+                width: 850,
+                url: '/js/elfinder2/connector.php',
+                commandsOptions: {
+                    getfile: {
+                        oncomplete: 'destroy' // destroy elFinder after file selection
+                    }
+                },
+
+                getFileCallback: function (url) {
+                    $('.listPhotos').append('' +
+                    '<li class="clearfix imageBlock">' +
+                        '<div class="dottedFrame">'+
+                            '<span><img src="/thumbs/130x100'+ url +'"></span>' +
+                            '<input type="hidden" name="data[ProductImages][][img]" value="'+ url +'">' +
+                        '</div>'+
+                        '<div class="text-center">'+
+                            '<a href="javascript:" class="uibutton special loading remove-img"><i class="fa fa-trash"></i></a>'+
+                        '</div>' +
+                    '</li>');
+
+                    showSuccess('Image uploaded successfully', 500);
+                }
+            });
+        });
+
+        $(document).on('click', '.remove-img', function(e) {
+            e.preventDefault();
+            $(this).parents('.imageBlock').remove();
+        });
+
+    });
+</script>

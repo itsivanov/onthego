@@ -1,0 +1,121 @@
+{{ _view.element('widgets/editor') }}
+
+{{ _view.start('captionHeader') }}
+    <div class="header"><span><span class="ico gray pencil"></span> Content </span>
+{{ _view.end() }}
+<!-- title box -->
+<div class="boxtitle min">{{ title }}</div>
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">News</a></li>
+
+    </ul>
+
+    <div id="tabs-1">
+        {{ form.create({'class' : 'form'}) }}
+        <div class="section">
+            <label>Title</label>
+            <div>{{ form.input('title', {'div' : false, 'label' : false, placeholder: 'Title'}) }}</div>
+        </div>
+        <div class="section">
+            <label>Subtitle</label>
+            <div>{{ form.input('subtitle', {'div' : false, 'label' : false, placeholder: 'Subtitle'}) }}</div>
+        </div>
+        <div class="section">
+            <label>Active</label>
+            {{ form.checkbox('active', {'checked': data.Tiding.active }) }}
+        </div>
+        {% if tidcategories %}
+        <div class="section">
+            <label>Category</label>
+            <div>
+                <select name="data[Tiding][tid_category_id]">
+                    {% for category in tidcategories %}
+                    <option value="{{ category.id }}" {{ _view.data.Tiding.tid_category_id==category.id?'selected':'' }}>{{ category.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {% endif %}
+        {% if tags %}
+        <div class="section">
+            <label>Tags</label>
+            <div>
+                <select name="data[Tag][][tag_id]" multiple>
+                    {% for tag in tags %}
+                        <option value="{{ tag.id }}"
+                        {% for selectedTag in _view.data.Tag %}
+                            {{ selectedTag.id==tag.id?'selected':'' }}
+                        {% endfor %}
+                                >{{ tag.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="section">
+            <label>Image</label>
+            <div>
+                {{ form.hidden('img', {'div': false, 'label': false, 'id':'imageInput'}) }}
+                <img src="{{ _view.data.Tiding.img|default('/img/no_image/default.png') }}" width="270" id="imageId"/>
+            </div>
+        </div>
+
+        <div class="section">
+            <label>Short content</label>
+            {{ form.input('content', {'type':'textarea', 'id' : 'wysiwyg1', 'label' : false}) }}
+        </div>
+        <div class="section">
+            <label>Full content</label>
+            {{ form.input('full_content', {'type':'textarea', 'id' : 'wysiwyg2', 'label' : false}) }}
+        </div>
+
+        <label>SEO block</label>
+        <div class="section">
+            <label>Meta title</label>
+            <div>{{ form.input('meta_title', {'div' : false, 'label' : false}) }}</div>
+        </div>
+        <div class="section">
+            <label>Meta keywords</label>
+            <div>{{ form.input('meta_keywords', {'div' : false, 'label' : false}) }}</div>
+        </div>
+        <div class="section">
+            <label>Meta description</label>
+            <div>{{ form.input('meta_description', {'div' : false, 'label' : false}) }}</div>
+        </div>
+        <div class="section last">
+          <div>
+              {{ form.submit('Save', {'class' : 'uibutton loading'}) }}
+          </div>
+        </div>
+        {{ form.end() }}
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+
+        $('#wysiwyg1, #wysiwyg2').elrte(opts);
+
+        $( "#tabs" ).tabs();
+
+        $(document).on('click', '#imageId', function(e) {
+            e.preventDefault();
+            var thisBtn = $(e.currentTarget);
+            $("<div />").dialogelfinder({
+                width: 850,
+                url: '/js/elfinder2/connector.php',
+                commandsOptions: {
+                    getfile: {
+                        oncomplete: 'destroy' // destroy elFinder after file selection
+                    }
+                },
+                getFileCallback: function (url) {
+                    $('#imageInput').val(url);
+                    thisBtn.attr('src', url);
+                }
+            });
+        });
+    });
+</script>
